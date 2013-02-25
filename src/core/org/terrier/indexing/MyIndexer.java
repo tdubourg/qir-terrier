@@ -1,4 +1,4 @@
-//@td file there, copy/padte from MyIndexer
+//@td file there, copy/paste from MyIndexer
 /*
  * Terrier - Terabyte Retriever
  * Webpage: http://terrier.org
@@ -239,13 +239,12 @@ public class MyIndexer extends Indexer
 		for(int collectionNo = 0; ! stopIndexing && collectionNo < collections_length; collectionNo++)
 		{
 			final Collection collection = collections[collectionNo];
+			System.out.println("@@ current collection = " + collection.toString()); //@td
 			long startCollection = System.currentTimeMillis();
 			boolean notLastDoc = false;
 			//while(notLastDoc = collection.hasNext()) {
 			while ((notLastDoc = collection.nextDocument())) {
-				System.out.println("@@ current collection = " + collection.toString()); //@td
-				//get the next document from the collection
-				
+				//get the next document from the collection				
 				//String docid = collection.getDocid();
 				//Document doc = collection.next();
 				Document doc = collection.getDocument();
@@ -264,6 +263,7 @@ public class MyIndexer extends Indexer
 					if ((term = doc.getNextTerm())!=null && !term.equals("")) {
 						termFields = doc.getFields();
 						/* pass term into TermPipeline (stop, stem etc) */
+						System.out.println("\n\nPassing term" + term + " to the pipeline.");
 						pipeline_first.processTerm(term);
 						/* the term pipeline will eventually add the term to this object. */
 					}
