@@ -84,6 +84,7 @@ import org.terrier.indexing.BlockSinglePassIndexer;
 import org.terrier.indexing.Collection;
 import org.terrier.indexing.Indexer;
 import org.terrier.indexing.SimpleFileCollection;
+import org.terrier.indexing.MySFC;
 import org.terrier.matching.ResultSet;
 import org.terrier.querying.Manager;
 import org.terrier.querying.SearchRequest;
