@@ -201,7 +201,7 @@ public class MyIndexer extends Indexer
 		
 	/** 
 	 * Creates the direct index, the document index and the lexicon.
-	 * Loops through each document in each of the collections, 
+	 * !!! Loops through each document in each of the collections, !!!
 	 * extracting terms and pushing these through the Term Pipeline 
 	 * (eg stemming, stopping, lowercase).
 	 * @param collections Collection[] the collections to be indexed.
@@ -209,11 +209,6 @@ public class MyIndexer extends Indexer
 	
 	public void createDirectIndex(Collection[] collections)
 	{// @td
-		StringBuilder logstr = new StringBuilder();
-		for (String s : collections.toString().split("\n")) {
-			logstr.append("\n@@ ").append(s);
-		}
-		System.out.println("@@ createDirectIndex(c=" + logstr.toString() + ")");
 		currentIndex = Index.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
 			? new LexiconBuilder(currentIndex, "lexicon", new FieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())

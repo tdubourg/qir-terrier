@@ -115,6 +115,14 @@ import org.terrier.utility.Rounding;
 public class DesktopTerrier extends JFrame {
 	private static final long serialVersionUID = 1L;
 
+	static public void greppableLog(String str) { // @td
+		StringBuilder logstr = new StringBuilder();
+		for (String s : str.split("\n")) { // just to be able to grep on that
+			logstr.append("\n@@ ").append(s);
+		}
+		System.out.println(logstr.toString());
+	}
+
 	/**
 	 * logging variables
 	 */
@@ -1128,7 +1136,7 @@ public class DesktopTerrier extends JFrame {
 //			 		? new BasicSinglePassIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)
 //			 		: new BasicIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 	
-			SimpleFileCollection sfc = new SimpleFileCollection(folderList, true);
+			SimpleFileCollection sfc = new MySFC(folderList, true);
 			
 			System.out.println(folderList.toString());
 			
