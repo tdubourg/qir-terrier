@@ -27,7 +27,7 @@
  */
 package org.terrier.structures.indexing;
 import gnu.trove.THashMap;
-import gnu.trove.TIntHashSet;
+import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntProcedure;
 
@@ -48,7 +48,7 @@ import org.terrier.structures.postings.WritablePosting;
 public class BlockDocumentPostingList extends DocumentPostingList
 {
 	/** mapping term to blockids in this document */
-	protected final THashMap<String, TIntHashSet> term_blocks = new THashMap<String, TIntHashSet>(AVG_DOCUMENT_UNIQUE_TERMS);
+	protected final THashMap<String, THashSet<String>> term_blocks = new THashMap<String, THashSet<String>>(AVG_DOCUMENT_UNIQUE_TERMS);
 	/** number of blocks in this document. usually equal to document length, but perhaps less */
 	protected int blockCount = 0;
 	/** Instantiate a new block document posting list. Saves block information, but no fields */
@@ -58,12 +58,12 @@ public class BlockDocumentPostingList extends DocumentPostingList
 	public void insert(String t, int blockId)
 	{
 		insert(t);
-		TIntHashSet blockids = null;
+		THashSet<String> blockids = null;
 		if ((blockids = term_blocks.get(t)) == null)
 		{
-			term_blocks.put(t, blockids = new TIntHashSet(/*TODO */));
+			term_blocks.put(t, blockids = new THashSet<String>(/*TODO */));
 		}
-		blockids.add(blockId);
+		blockids.add(Integer.toString(blockId));
 		blockCount++;	
 	}
 
@@ -82,6 +82,16 @@ public class BlockDocumentPostingList extends DocumentPostingList
 		return rtr;
 	}
 
+	private int[] fromStrArrToIntArr(String[] arr) { // @td
+		int[] result = new int[arr.length];
+		for (int i  = 0; i++; i< arr.length) {
+			try {
+				result[i] = Integer.parseInt(arr[i]);
+			} catch(Exception e) {
+				System.out.println("@ OUCH, parseInt failed for ." + arr[i]);
+			}
+		}
+	}
 	/** returns the postings suitable to be written into the block direct index */
 	@Override
 	public int[][] getPostings()
@@ -100,10 +110,10 @@ public class BlockDocumentPostingList extends DocumentPostingList
 			{
 				termids[i] = getTermId(a);
 				tfs[i] = b;
-				final TIntHashSet ids = term_blocks.get(a);
+				final THashSet<String> ids = term_blocks.get(a);
 				blockfreqs[i] = ids.size();
 				blockTotal += ids.size();
-				final int[] bids = ids.toArray();
+				final int[] bids = fromStrArrToIntArr(ids.toArray());
 				Arrays.sort(bids);
 				term2blockids.put(termids[i], bids);
 				//System.err.println(a+": tid="+termids[i]+" tf="+tfs[i]+" bf="+blockfreqs[i] +" blocks="+Arrays.toString(bids));
