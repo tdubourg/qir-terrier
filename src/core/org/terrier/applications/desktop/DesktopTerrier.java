@@ -79,6 +79,7 @@ import org.terrier.applications.desktop.filehandling.MultiOSFileOpener;
 // import org.terrier.indexing.BasicIndexer;
 import org.terrier.indexing.MyIndexer;
 import org.terrier.indexing.BasicSinglePassIndexer;
+import org.terrier.indexing.MyBlockIndexer;
 import org.terrier.indexing.BlockIndexer;
 import org.terrier.indexing.BlockSinglePassIndexer;
 import org.terrier.indexing.Collection;
@@ -800,6 +801,7 @@ public class DesktopTerrier extends JFrame {
 		super();
 		//setting properties for the application
 		ApplicationSetup.BLOCK_INDEXING = true;
+		ApplicationSetup.BLOCK_SIZE = 2; // @td
 		//assume some defaults so qe can work
 		if (( ApplicationSetup.getProperty("querying.allowed.controls", null)) == null)
 		{
@@ -1128,7 +1130,7 @@ public class DesktopTerrier extends JFrame {
 		// @td starts about here
 			Indexer indexer;
 			final boolean useSinglePass = Boolean.parseBoolean(ApplicationSetup.getProperty("desktop.indexing.singlepass", "false"));
-			indexer = new MyIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
+			indexer = new MyBlockIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX);
 //			 ApplicationSetup.BLOCK_INDEXING
 //			 	? useSinglePass 
 //			 		? new BlockSinglePassIndexer(ApplicationSetup.TERRIER_INDEX_PATH, ApplicationSetup.TERRIER_INDEX_PREFIX)  
