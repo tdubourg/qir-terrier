@@ -50,4 +50,8 @@ public class MySFC extends SimpleFileCollection
 	public MySFC(List<String> filelist, boolean recurse) {
 		super(filelist, recurse);
 	}
+
+	public MySFC() {
+		super();
+	}
 }

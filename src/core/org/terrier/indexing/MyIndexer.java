@@ -56,22 +56,9 @@ import org.terrier.utility.ArrayUtils;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.TermCodes;
 /** 
- * MyIndexer is the default indexer for Terrier. It takes 
- * terms from each Document object provided by the collection, and 
- * adds terms to temporary Lexicons, and into the DirectFile. 
- * The documentIndex is updated to give the pointers into the Direct
- * file. The temporary lexicons are then merged into the main lexicon.
- * Inverted Index construction takes place as a second step.
- * <br>
- * <b>Properties:</b>
- * <ul>
- * <li><tt>indexing.max.encoded.documentindex.docs</tt> - how many docs before the DocumentIndexEncoded is dropped in favour of the DocumentIndex (on disk implementation).
- * <li><tt>string.use_utf</tt> - use the UTF index structures?
- * <li><i>See Also: Properties in </i><a href="Indexer.html">org.terrier.indexing.Indexer</a> <i>and</i> <a href="BlockIndexer.html">org.terrier.indexing.BlockIndexer</a></li>
- * </ul>
- * @author Craig Macdonald &amp; Vassilis Plachouras
  * @see org.terrier.indexing.Indexer
  * @see org.terrier.indexing.BlockIndexer
+ * @see org.terrier.indexing.BasicIndexer
  */
 public class MyIndexer extends Indexer
 {
@@ -95,6 +82,7 @@ public class MyIndexer extends Indexer
 			if (term != null)
 			{
 				//add term to thingy tree
+				System.out.println("@ Inserting term \"" + term + "\" into the document's terms.");
 				termsInDocument.insert(term);
 				numOfTokensInDocument++;
 			}
@@ -209,6 +197,7 @@ public class MyIndexer extends Indexer
 	
 	public void createDirectIndex(Collection[] collections)
 	{// @td
+		// ---------------------------------- INIT
 		currentIndex = Index.createNewIndex(path, prefix);
 		lexiconBuilder = FieldScore.FIELDS_COUNT > 0
 			? new LexiconBuilder(currentIndex, "lexicon", new FieldLexiconMap(FieldScore.FIELDS_COUNT), FieldLexiconEntry.class.getName())
@@ -220,28 +209,26 @@ public class MyIndexer extends Indexer
 		} catch (IOException ioe) {
 			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
 		}
-			//	new DirectIndexBuilder(currentIndex, "direct");
 		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
 		metaBuilder = createMetaIndexBuilder();
 		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
-				
-		//int LexiconCount = 0;
-		int numberOfDocuments = 0; int numberOfTokens = 0;
-		//final long startBunchOfDocuments = System.currentTimeMillis();
+		// ---------------------------------- INIT
+
+		// ---------------------------------- LOOP INIT		
+		int numberOfDocuments = 0; 
+		int numberOfTokens = 0;
 		final int collections_length = collections.length;
-		final boolean boundaryDocsEnabled = BUILDER_BOUNDARY_DOCUMENTS.size() > 0;
 		boolean stopIndexing = false;
+		// ---------------------------------- LOOP INIT	
+		// ---------------------------------- COLLECTIONS LOOP 
 		for(int collectionNo = 0; ! stopIndexing && collectionNo < collections_length; collectionNo++)
 		{
 			final Collection collection = collections[collectionNo];
+			// ---------------------------------- DOCS LOOP
 			System.out.println("@@ current collection = " + collection.toString()); //@td
 			long startCollection = System.currentTimeMillis();
 			boolean notLastDoc = false;
-			//while(notLastDoc = collection.hasNext()) {
 			while ((notLastDoc = collection.nextDocument())) {
-				//get the next document from the collection				
-				//String docid = collection.getDocid();
-				//Document doc = collection.next();
 				Document doc = collection.getDocument();
 				
 				if (doc == null)
@@ -254,18 +241,17 @@ public class MyIndexer extends Indexer
 				numOfTokensInDocument = 0;
 	
 				//get each term in the document
+				// ---------------------------------- TERMS LOOP
 				while (!doc.endOfDocument()) {
 					if ((term = doc.getNextTerm())!=null && !term.equals("")) {
 						termFields = doc.getFields();
 						/* pass term into TermPipeline (stop, stem etc) */
-						System.out.println("\n\nPassing term" + term + " to the pipeline.");
+						// System.out.println("\n\n@ Passing term \"" + term + "\" to the pipeline.");
 						pipeline_first.processTerm(term);
 						/* the term pipeline will eventually add the term to this object. */
 					}
-					if (MAX_TOKENS_IN_DOCUMENT > 0 && 
-							numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
-							break;
 				}
+				// ---------------------------------- /TERMS LOOP
 				//if we didn't index all tokens from document,
 				//we need to get to the end of the document.
 				while (!doc.endOfDocument()) 
@@ -280,7 +266,7 @@ public class MyIndexer extends Indexer
 						indexEmpty(doc.getAllProperties());
 					}
 					else
-					{	/* index this docuent */
+					{	/* index this document */
 						numberOfTokens += numOfTokensInDocument;
 						indexDocument(doc.getAllProperties(), termsInDocument);
 					}
@@ -289,21 +275,8 @@ public class MyIndexer extends Indexer
 				{
 					logger.error("Failed to index "+doc.getProperty("docno"),ioe);
 				}
-				
-				if (MAX_DOCS_PER_BUILDER>0 && numberOfDocuments >= MAX_DOCS_PER_BUILDER)
-				{
-					stopIndexing = true;
-					break;
-				}
-
-				if (boundaryDocsEnabled && BUILDER_BOUNDARY_DOCUMENTS.contains(doc.getProperty("docno")))
-				{
-					logger.warn("Document "+doc.getProperty("docno")+" is a builder boundary document. Boundary forced.");
-					stopIndexing = true;
-					break;
-				}
 			}
-
+			// ---------------------------------- /DOCS LOOP
 
 			if (! notLastDoc)
 			{
@@ -321,6 +294,7 @@ public class MyIndexer extends Indexer
 			if (secs > 3600)
 				 logger.info("Rate: "+((double)numberOfDocuments/((double)secs/3600.0d))+" docs/hour"); 
 		}
+		// ---------------------------------- /COLLECTIONS LOOP 
 		finishedDirectIndexBuild();
 		/*end of all the collections has been reached */
 		/* flush the index buffers */

@@ -41,7 +41,7 @@ public interface TermPipeline
 	void processTerm(String t);
 	
 	/**
-	 * This method implements the specific rest option needed to implements
+	 * This method implements the specific reset option needed to implement
 	 * query or doc oriented policy.
 	 * @return results of the operation
 	 */
