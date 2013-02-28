@@ -1,3 +1,5 @@
+package org.terrier.structures;
+
 public class DocumentVectorSet {
 	public void reset() {
 
