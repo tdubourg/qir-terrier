@@ -75,6 +75,35 @@ import org.terrier.utility.TermCodes;
  */
 public class MyIndexer extends Indexer
 {
+	//* This class is not multi-thread-proof
+	protected class CircularFixedSizeBuffer<E>{
+		java.util.concurrent.LinkedBlockingDeque deq;
+
+		public CircularFixedSizeBuffer(int capacity) { 
+			deq = new java.util.concurrent.LinkedBlockingDeque<E>(capacity);
+		}
+
+		public void push(E element) {
+			try {
+				deq.add(E); 
+			} catch(IllegalStateException e) {
+				deq.pop();
+				deq.add(E);
+			}
+		}
+	}
+
+	protected class DocumentVectorsBuilder {
+		private 
+
+		public DocumentVectorsBuilder() {
+
+		}
+
+		public DocumentVector pushTerm(String term) {
+
+		}
+	}
 	
 	/** 
 	 * This class implements an end of a TermPipeline that adds the
@@ -96,6 +125,7 @@ public class MyIndexer extends Indexer
 			{
 				//add term to thingy tree
 				termsInDocument.insert(term);
+				documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm())
 				numOfTokensInDocument++;
 			}
 		}
