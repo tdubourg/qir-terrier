@@ -52,6 +52,7 @@ import org.terrier.structures.indexing.FieldLexiconMap;
 import org.terrier.structures.indexing.InvertedIndexBuilder;
 import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.structures.indexing.LexiconMap;
+import org.terrier.structures.indexing.MyIndexerBasicTermProcessor;
 import org.terrier.terms.TermPipeline;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
@@ -77,65 +78,11 @@ import org.terrier.utility.TermCodes;
  */
 public class MyIndexer extends Indexer
 {
-	//* This class is not multi-thread-proof
-	protected class CircularFixedSizeBuffer<E>{
-		java.util.concurrent.LinkedBlockingDeque deq;
 
-		public CircularFixedSizeBuffer(int capacity) { 
-			deq = new java.util.concurrent.LinkedBlockingDeque<E>(capacity);
-		}
-
-		public void push(E element) {
-			try {
-				deq.add(element); 
-			} catch(IllegalStateException e) {
-				deq.pop();
-				deq.add(element);
-			}
-		}
-	}
-
-	protected class DocumentVectorsBuilder {
-		private CircularFixedSizeBuffer<String> buffer;
-
-		public DocumentVectorsBuilder() {
-            buffer = new CircularFixedSizeBuffer<>(ApplicationSetup.WINDOW_SIZE);
-		}
-
-		public DocumentVector pushTerm(String term) {
-            return null;
-		}
-	}
-	
-	/** 
-	 * This class implements an end of a TermPipeline that adds the
-	 * term to the DocumentTree. This TermProcessor does NOT have field
-	 * support.
-	 */
-	protected class BasicTermProcessor implements TermPipeline
-	{
-		public BasicTermProcessor() {
-			System.out.println("@@ Instanciating a new basic term processor");
-		}
-
-		//term pipeline implementation
-		public void processTerm(String term)
-		{
-			// System.out.println("Processing a new term " + term);
-			/* null means the term has been filtered out (eg stopwords) */
-			if (term != null)
-			{
-				//add term to thingy tree
-				termsInDocument.insert(term);
-				documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm(term));
-				numOfTokensInDocument++;
-			}
-		}
-		
-		public boolean reset() {
-			return true;
-		}
-	}
+    public void incrementNumOfTokensInDocument() {
+        this.numOfTokensInDocument++;
+    }
+    
 	/** This class implements an end of a TermPipeline that adds the
 	 *  term to the DocumentTree. This TermProcessor does have field
 	 *  support.
@@ -232,7 +179,7 @@ public class MyIndexer extends Indexer
 	{
 		if(FieldScore.USE_FIELD_INFORMATION)
 			return new FieldTermProcessor();
-		return new BasicTermProcessor();
+		return new MyIndexerBasicTermProcessor(termsInDocument, documentVectorsSet, currentDocumentVectorsBuilder, this);
 	}
 		
 	/** 
