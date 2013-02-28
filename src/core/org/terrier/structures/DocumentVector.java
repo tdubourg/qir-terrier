@@ -1,5 +1,11 @@
 public class DocumentVector {
-	public reset();
-	public boolean endOfVector();
-	public int getNextScalar();
+	public void reset() {
+
+	}
+	public boolean endOfVector() {
+		return false;
+	}
+	public int getNextScalar() {
+		return -1;
+	}
 }

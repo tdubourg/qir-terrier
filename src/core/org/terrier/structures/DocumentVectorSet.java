@@ -1,6 +1,12 @@
 public class DocumentVectorSet {
-	public reset();
-	public boolean endOfVectorSet();
-	public DocumentVector getNextVector();
+	public void reset() {
+
+	}
+	public boolean endOfVectorSet() {
+		return false;
+	}
+	public DocumentVector getNextVector() {
+		return -1;
+	}
 }
 
