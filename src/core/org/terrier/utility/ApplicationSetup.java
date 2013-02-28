@@ -187,6 +187,7 @@ public class ApplicationSetup {
 	 */
 	public static String COLLECTION_SPEC;
 	
+    public static int WINDOW_SIZE;
 	
 	
 	//TREC SPECIFIC setup

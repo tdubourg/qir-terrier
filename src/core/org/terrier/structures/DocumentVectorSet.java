@@ -8,7 +8,11 @@ public class DocumentVectorSet {
 		return false;
 	}
 	public DocumentVector getNextVector() {
-		return -1;
+		return null;
 	}
+
+    public void insert(DocumentVector pushTerm) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 }
 

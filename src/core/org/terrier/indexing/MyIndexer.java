@@ -39,6 +39,8 @@ import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.DirectInvertedOutputStream;
 import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.DocumentVector;
+import org.terrier.structures.DocumentVectorSet;
 import org.terrier.structures.FieldDirectInvertedOutputStream;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
@@ -85,23 +87,23 @@ public class MyIndexer extends Indexer
 
 		public void push(E element) {
 			try {
-				deq.add(E); 
+				deq.add(element); 
 			} catch(IllegalStateException e) {
 				deq.pop();
-				deq.add(E);
+				deq.add(element);
 			}
 		}
 	}
 
 	protected class DocumentVectorsBuilder {
-		private 
+		private CircularFixedSizeBuffer<String> buffer;
 
 		public DocumentVectorsBuilder() {
-
+            buffer = new CircularFixedSizeBuffer<>(ApplicationSetup.WINDOW_SIZE);
 		}
 
 		public DocumentVector pushTerm(String term) {
-
+            return null;
 		}
 	}
 	
@@ -125,7 +127,7 @@ public class MyIndexer extends Indexer
 			{
 				//add term to thingy tree
 				termsInDocument.insert(term);
-				documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm())
+				documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm(term));
 				numOfTokensInDocument++;
 			}
 		}
@@ -176,6 +178,10 @@ public class MyIndexer extends Indexer
 			return true;
 		}
 	}
+    
+    protected DocumentVectorSet documentVectorsSet;
+    protected DocumentVectorsBuilder currentDocumentVectorsBuilder;
+    
 	
 	/** 
 	 * A private variable for storing the fields a term appears into.
