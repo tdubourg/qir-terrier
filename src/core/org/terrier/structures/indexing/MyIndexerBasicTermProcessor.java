@@ -35,7 +35,7 @@ public class MyIndexerBasicTermProcessor implements TermPipeline {
             termsInDocument.insert(term);
             int termId;
             termId = termsInDocument.getTermId(term);
-            documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm(termId));
+            currentDocumentVectorsBuilder.pushTerm(termId);
             currenIndexer.incrementNumOfTokensInDocument();
         }
     }

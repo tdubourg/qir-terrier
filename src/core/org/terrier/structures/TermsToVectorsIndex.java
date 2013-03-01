@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * @author troll
  */
-public class TermsToVectorsIndex extends Index implements Iterable, Map<Integer, VectorSet> {
+public class TermsToVectorsIndex extends Index implements Iterable<Map.Entry<Integer, VectorSet>>, Map<Integer, VectorSet> {
     protected Map<Integer, VectorSet> entries;
     
     // ----------- Iterable Implementation ----------
@@ -84,4 +84,13 @@ public class TermsToVectorsIndex extends Index implements Iterable, Map<Integer,
     }
     
     // ----------- /Map Interface Implementation ----------
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        TermsToVectorsIndex other = (TermsToVectorsIndex)o;
+        return this.entries.equals(other.entries);
+    }
 }

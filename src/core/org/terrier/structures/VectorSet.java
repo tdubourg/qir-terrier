@@ -25,7 +25,15 @@ public class VectorSet {
 		}
 	}
 
-    public void insert(Vector pushTerm) {
+    public VectorSet insert(Vector vec) {
+        vectors.add(vec);
+        return this;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

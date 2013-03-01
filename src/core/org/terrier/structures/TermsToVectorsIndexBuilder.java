@@ -35,9 +35,11 @@ public class TermsToVectorsIndexBuilder {
         }
     }
     private CircularFixedSizeBuffer<Integer> buffer;
+    private TermsToVectorsIndex ttvi;
 
     public TermsToVectorsIndexBuilder() {
         buffer = new CircularFixedSizeBuffer<>(ApplicationSetup.WINDOW_SIZE);
+        ttvi = new TermsToVectorsIndex();
     }
 
     private Vector createVectorFromBuffer() {
@@ -48,9 +50,18 @@ public class TermsToVectorsIndexBuilder {
         return dv;
     }
 
-    public Vector pushTerm(int termid) {
+    public void pushTerm(int termid) {
         buffer.push(termid);
         Vector dv = createVectorFromBuffer();
-        return dv;
+        VectorSet vs = ttvi.get(termid);
+        if (null != vs) {
+            vs.insert(dv);
+        } else {
+            ttvi.put(termid, new VectorSet().insert(dv));
+        }
+    }
+    
+    public TermsToVectorsIndex getBuiltIndex() {
+        return ttvi;
     }
 }

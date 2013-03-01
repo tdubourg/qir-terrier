@@ -61,11 +61,12 @@ public class Vector {
         return i_pointer >= entries.size();
     }
 
-    protected void pushEntry(VectorEntry dve) {
+    protected Vector pushEntry(VectorEntry dve) {
         entries.add(dve);
+        return this;
     }
 
-    protected void pushNewTerm(int termId) {
+    protected Vector pushNewTerm(int termId) {
         int ind = indexOf(termId);
         if (-1 == ind) {
             VectorEntry v = new VectorEntry(termId, 1);
@@ -73,6 +74,7 @@ public class Vector {
         } else {
             entries.get(ind).newOccurence();
         }
+        return this;
     }
 
     public VectorEntry getNextEntry() {
@@ -82,5 +84,12 @@ public class Vector {
         } else {
             return null;
         }
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }
