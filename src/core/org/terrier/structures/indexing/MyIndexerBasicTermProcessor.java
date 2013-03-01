@@ -4,9 +4,9 @@
  */
 package org.terrier.structures.indexing;
 
-import org.terrier.indexing.DocumentVectorsBuilder;
+import org.terrier.indexing.TermsToVectorsIndexBuilder;
 import org.terrier.indexing.MyIndexer;
-import org.terrier.structures.DocumentVectorSet;
+import org.terrier.structures.VectorSet;
 import org.terrier.terms.TermPipeline;
 
 /**
@@ -14,11 +14,11 @@ import org.terrier.terms.TermPipeline;
  */
 public class MyIndexerBasicTermProcessor implements TermPipeline {
     private DocumentPostingList termsInDocument;
-    private DocumentVectorSet documentVectorsSet;
-    private DocumentVectorsBuilder currentDocumentVectorsBuilder;
+    private VectorSet documentVectorsSet;
+    private TermsToVectorsIndexBuilder currentDocumentVectorsBuilder;
     private MyIndexer currenIndexer;
 
-    public MyIndexerBasicTermProcessor(DocumentPostingList _termsInDocument, DocumentVectorSet _documentVectorSet, DocumentVectorsBuilder _documentVectorBuilder, MyIndexer _currentIndexer) {
+    public MyIndexerBasicTermProcessor(DocumentPostingList _termsInDocument, VectorSet _documentVectorSet, TermsToVectorsIndexBuilder _documentVectorBuilder, MyIndexer _currentIndexer) {
         System.out.println("@@ Instanciating a new basic term processor");
         termsInDocument = _termsInDocument;
         currentDocumentVectorsBuilder = _documentVectorBuilder;

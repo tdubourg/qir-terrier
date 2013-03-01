@@ -2,7 +2,7 @@ package org.terrier.structures;
 
 import java.util.ArrayList;
 
-public class DocumentVector {
+public class Vector {
 
 	public class DocumentVectorEntry {
 		private int termId;
@@ -20,7 +20,7 @@ public class DocumentVector {
 	private int i_pointer;
 	private ArrayList<DocumentVectorEntry> entries;
 
-    public DocumentVector(){
+    public Vector(){
 		entries = new ArrayList<>(100);
 	}
 
@@ -31,6 +31,10 @@ public class DocumentVector {
 	public boolean endOfVector() {
 		return i_pointer >= entries.size();
 	}
+    
+    protected void pushEntry(DocumentVectorEntry dve) {
+        entries.add(dve);
+    }
 
 	public DocumentVectorEntry getNextEntry() {
 		i_pointer++;

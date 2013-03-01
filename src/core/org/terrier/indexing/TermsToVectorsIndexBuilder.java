@@ -4,13 +4,22 @@
  */
 package org.terrier.indexing;
 
-import org.terrier.structures.DocumentVector;
+import java.util.Iterator;
+import org.terrier.structures.Vector;
 import org.terrier.utility.ApplicationSetup;
 
-public class DocumentVectorsBuilder {
+public class TermsToVectorsIndexBuilder {
+    private Vector createVectorFromBuffer() {
+        Vector dv = new Vector();
+        
+        for (Integer termid : buffer) {
+            
+        }
+        return dv;
+    }
     //* This class is not multi-thread-proof
 
-    protected class CircularFixedSizeBuffer<E> {
+    protected class CircularFixedSizeBuffer<E> implements Iterable<E> {
 
         private java.util.concurrent.LinkedBlockingDeque deq;
 
@@ -26,15 +35,22 @@ public class DocumentVectorsBuilder {
                 deq.add(element);
             }
         }
+
+        @Override
+        public Iterator<E> iterator() {
+            return deq.iterator();
+        }
+        
     }
     private CircularFixedSizeBuffer<Integer> buffer;
 
-    public DocumentVectorsBuilder() {
+    public TermsToVectorsIndexBuilder() {
         buffer = new CircularFixedSizeBuffer<>(ApplicationSetup.WINDOW_SIZE);
     }
 
-    public DocumentVector pushTerm(int termid) {
+    public Vector pushTerm(int termid) {
         buffer.push(termid);
-        return null;
+        Vector dv = createVectorFromBuffer();
+        return dv;
     }
 }

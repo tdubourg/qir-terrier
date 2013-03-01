@@ -2,11 +2,11 @@ package org.terrier.structures;
 
 import java.util.ArrayList;
 
-public class DocumentVectorSet {
+public class VectorSet {
 	private int i_pointer;
-	private ArrayList<DocumentVector> vectors;
+	private ArrayList<Vector> vectors;
 
-	public DocumentVectorSet(){
+	public VectorSet(){
 		vectors = new ArrayList<>(100);
 	}
 
@@ -16,7 +16,7 @@ public class DocumentVectorSet {
 	public boolean endOfVectorSet() {
 		return i_pointer >= vectors.size();
 	}
-	public DocumentVector getNextVector() {
+	public Vector getNextVector() {
 		i_pointer++;
 		if (!endOfVectorSet()) {
 			return vectors.get(i_pointer);
@@ -25,7 +25,7 @@ public class DocumentVectorSet {
 		}
 	}
 
-    public void insert(DocumentVector pushTerm) {
+    public void insert(Vector pushTerm) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

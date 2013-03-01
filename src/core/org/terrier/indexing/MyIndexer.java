@@ -39,8 +39,8 @@ import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.DirectInvertedOutputStream;
 import org.terrier.structures.DocumentIndexEntry;
-import org.terrier.structures.DocumentVector;
-import org.terrier.structures.DocumentVectorSet;
+import org.terrier.structures.Vector;
+import org.terrier.structures.VectorSet;
 import org.terrier.structures.FieldDirectInvertedOutputStream;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
@@ -126,8 +126,8 @@ public class MyIndexer extends Indexer
 		}
 	}
     
-    protected DocumentVectorSet documentVectorsSet;
-    protected DocumentVectorsBuilder currentDocumentVectorsBuilder;
+    protected VectorSet documentVectorsSet;
+    protected TermsToVectorsIndexBuilder currentDocumentVectorsBuilder;
     
 	
 	/** 
@@ -209,7 +209,7 @@ public class MyIndexer extends Indexer
 			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
 		}
 			//	new DirectIndexBuilder(currentIndex, "direct");
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
+//		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
 		metaBuilder = createMetaIndexBuilder();
 		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 				
@@ -329,7 +329,7 @@ public class MyIndexer extends Indexer
 		
 		//directIndexBuilder.finishedCollections();
 		directIndexBuilder.close();
-		docIndexBuilder.finishedCollections();
+//		docIndexBuilder.finishedCollections();
 		
 		if (FieldScore.FIELDS_COUNT > 0)
 		{
@@ -379,14 +379,15 @@ public class MyIndexer extends Indexer
 		/* add words to lexicontree */
 		lexiconBuilder.addDocumentTerms(_termsInDocument);
 		/* add doc postings to the direct index */
-		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2());
+//		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2());
+        
 			//.addDocument(termsInDocument.getPostings());
 		/* add doc to documentindex */
-		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();
-		die.setBitIndexPointer(dirIndexPost);
-		docIndexBuilder.addEntryToBuffer(die);
+//		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();
+//		die.setBitIndexPointer(dirIndexPost);
+//		docIndexBuilder.addEntryToBuffer(die);
 		/** add doc metadata to index */
-		metaBuilder.writeDocumentEntry(docProperties);		
+//		metaBuilder.writeDocumentEntry(docProperties);		
 	}
 	
 	/**
