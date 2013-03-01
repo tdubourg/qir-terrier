@@ -2,24 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.terrier.indexing;
+package org.terrier.structures;
 
 import java.util.Iterator;
 import org.terrier.structures.Vector;
 import org.terrier.utility.ApplicationSetup;
 
+//* This class is not multi-thread-proof because of internal classes that are not
 public class TermsToVectorsIndexBuilder {
-    private Vector createVectorFromBuffer() {
-        Vector dv = new Vector();
-        
-        for (Integer termid : buffer) {
-            
-        }
-        return dv;
-    }
-    //* This class is not multi-thread-proof
 
-    protected class CircularFixedSizeBuffer<E> implements Iterable<E> {
+    //* This class is not multi-thread-proof
+    static protected class CircularFixedSizeBuffer<E> implements Iterable<E> {
 
         private java.util.concurrent.LinkedBlockingDeque deq;
 
@@ -40,12 +33,19 @@ public class TermsToVectorsIndexBuilder {
         public Iterator<E> iterator() {
             return deq.iterator();
         }
-        
     }
     private CircularFixedSizeBuffer<Integer> buffer;
 
     public TermsToVectorsIndexBuilder() {
         buffer = new CircularFixedSizeBuffer<>(ApplicationSetup.WINDOW_SIZE);
+    }
+
+    private Vector createVectorFromBuffer() {
+        Vector dv = new Vector();
+        for (Integer termid : buffer) {
+            dv.pushNewTerm(termid);
+        }
+        return dv;
     }
 
     public Vector pushTerm(int termid) {

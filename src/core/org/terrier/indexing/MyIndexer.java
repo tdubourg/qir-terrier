@@ -26,6 +26,7 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>
  */
 package org.terrier.indexing;
+import org.terrier.structures.TermsToVectorsIndexBuilder;
 import gnu.trove.TIntHashSet;
 
 import java.io.IOException;

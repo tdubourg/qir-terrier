@@ -4,7 +4,7 @@
  */
 package org.terrier.structures.indexing;
 
-import org.terrier.indexing.TermsToVectorsIndexBuilder;
+import org.terrier.structures.TermsToVectorsIndexBuilder;
 import org.terrier.indexing.MyIndexer;
 import org.terrier.structures.VectorSet;
 import org.terrier.terms.TermPipeline;
@@ -35,7 +35,7 @@ public class MyIndexerBasicTermProcessor implements TermPipeline {
             termsInDocument.insert(term);
             int termId;
             termId = termsInDocument.getTermId(term);
-            documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm(term));
+            documentVectorsSet.insert(currentDocumentVectorsBuilder.pushTerm(termId));
             currenIndexer.incrementNumOfTokensInDocument();
         }
     }
