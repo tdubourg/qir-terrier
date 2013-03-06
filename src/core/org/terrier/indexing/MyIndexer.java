@@ -26,6 +26,7 @@
  *   Vassilis Plachouras <vassilis{a.}dcs.gla.ac.uk>
  */
 package org.terrier.indexing;
+import org.terrier.structures.TermsToVectorsIndexBuilder;
 import gnu.trove.TIntHashSet;
 
 import java.io.IOException;
@@ -39,6 +40,8 @@ import org.terrier.structures.BasicLexiconEntry;
 import org.terrier.structures.BitIndexPointer;
 import org.terrier.structures.DirectInvertedOutputStream;
 import org.terrier.structures.DocumentIndexEntry;
+import org.terrier.structures.Vector;
+import org.terrier.structures.VectorSet;
 import org.terrier.structures.FieldDirectInvertedOutputStream;
 import org.terrier.structures.FieldDocumentIndexEntry;
 import org.terrier.structures.FieldLexiconEntry;
@@ -50,6 +53,7 @@ import org.terrier.structures.indexing.FieldLexiconMap;
 import org.terrier.structures.indexing.InvertedIndexBuilder;
 import org.terrier.structures.indexing.LexiconBuilder;
 import org.terrier.structures.indexing.LexiconMap;
+import org.terrier.structures.indexing.MyIndexerBasicTermProcessor;
 import org.terrier.terms.TermPipeline;
 import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.ArrayUtils;
@@ -75,35 +79,11 @@ import org.terrier.utility.TermCodes;
  */
 public class MyIndexer extends Indexer
 {
-	
-	/** 
-	 * This class implements an end of a TermPipeline that adds the
-	 * term to the DocumentTree. This TermProcessor does NOT have field
-	 * support.
-	 */
-	protected class BasicTermProcessor implements TermPipeline
-	{
-		public BasicTermProcessor() {
-			System.out.println("@@ Instanciating a new basic term processor");
-		}
 
-		//term pipeline implementation
-		public void processTerm(String term)
-		{
-			// System.out.println("Processing a new term " + term);
-			/* null means the term has been filtered out (eg stopwords) */
-			if (term != null)
-			{
-				//add term to thingy tree
-				termsInDocument.insert(term);
-				numOfTokensInDocument++;
-			}
-		}
-		
-		public boolean reset() {
-			return true;
-		}
-	}
+    public void incrementNumOfTokensInDocument() {
+        this.numOfTokensInDocument++;
+    }
+    
 	/** This class implements an end of a TermPipeline that adds the
 	 *  term to the DocumentTree. This TermProcessor does have field
 	 *  support.
@@ -146,6 +126,10 @@ public class MyIndexer extends Indexer
 			return true;
 		}
 	}
+    
+    protected VectorSet documentVectorsSet;
+    protected TermsToVectorsIndexBuilder currentDocumentVectorsBuilder;
+    
 	
 	/** 
 	 * A private variable for storing the fields a term appears into.
@@ -196,7 +180,7 @@ public class MyIndexer extends Indexer
 	{
 		if(FieldScore.USE_FIELD_INFORMATION)
 			return new FieldTermProcessor();
-		return new BasicTermProcessor();
+		return new MyIndexerBasicTermProcessor(termsInDocument, documentVectorsSet, currentDocumentVectorsBuilder, this);
 	}
 		
 	/** 
@@ -226,7 +210,7 @@ public class MyIndexer extends Indexer
 			logger.error("Cannot make DirectInvertedOutputStream:", ioe);
 		}
 			//	new DirectIndexBuilder(currentIndex, "direct");
-		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
+//		docIndexBuilder = new DocumentIndexBuilder(currentIndex, "document");
 		metaBuilder = createMetaIndexBuilder();
 		emptyDocIndexEntry = (FieldScore.FIELDS_COUNT > 0) ? new FieldDocumentIndexEntry(FieldScore.FIELDS_COUNT) : new BasicDocumentIndexEntry();
 				
@@ -346,7 +330,7 @@ public class MyIndexer extends Indexer
 		
 		//directIndexBuilder.finishedCollections();
 		directIndexBuilder.close();
-		docIndexBuilder.finishedCollections();
+//		docIndexBuilder.finishedCollections();
 		
 		if (FieldScore.FIELDS_COUNT > 0)
 		{
@@ -396,14 +380,15 @@ public class MyIndexer extends Indexer
 		/* add words to lexicontree */
 		lexiconBuilder.addDocumentTerms(_termsInDocument);
 		/* add doc postings to the direct index */
-		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2());
+//		BitIndexPointer dirIndexPost = directIndexBuilder.writePostings(_termsInDocument.getPostings2());
+        
 			//.addDocument(termsInDocument.getPostings());
 		/* add doc to documentindex */
-		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();
-		die.setBitIndexPointer(dirIndexPost);
-		docIndexBuilder.addEntryToBuffer(die);
+//		DocumentIndexEntry die = _termsInDocument.getDocumentStatistics();
+//		die.setBitIndexPointer(dirIndexPost);
+//		docIndexBuilder.addEntryToBuffer(die);
 		/** add doc metadata to index */
-		metaBuilder.writeDocumentEntry(docProperties);		
+//		metaBuilder.writeDocumentEntry(docProperties);		
 	}
 	
 	/**
